@@ -1,68 +1,68 @@
 import java.util.*;
-public class dijkstra {
-    public static class edge{
-        int to;
-        int w;
-        edge(int to, int w){
-            this.to = to;
-            this.w = w;
-        }
-    }
 
-    static void dijkstra(int n, List<List<edge>> g, int src){
-        int[] dist =new int[n];
-        Arrays.fill(dist,Integer.MAX_VALUE);
-        dist[src]=0;
-        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a->a[1]));
-        pq.add(new int[]{src,0});
-        while(!pq.isEmpty()){
-            int[] cur =pq.poll();
-            int u=cur[0],d=cur[1];
-            if(d>dist[u]) continue;
-            for(edge e:g.get(u)){
-                if(dist[u]+e.w<dist[e.to]){
-                    dist[e.to]=dist[u]+e.w;
-                    
-                    pq.add(new int[]{e.to,dist[e.to]});
+public class DijkstraSimple {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of nodes: ");
+        int n = sc.nextInt();
+
+        int[][] cost = new int[n][n];
+        System.out.println("Enter cost matrix (999 for no link):");
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                cost[i][j] = sc.nextInt();
+
+        System.out.print("Enter source node: ");
+        int src = sc.nextInt();
+
+        int[] dist = new int[n];
+        boolean[] vis = new boolean[n];
+
+        Arrays.fill(dist, 999);
+        dist[src] = 0;
+
+        for (int c = 0; c < n - 1; c++) {
+
+            int u = -1, min = 999;
+            for (int i = 0; i < n; i++)
+                if (!vis[i] && dist[i] < min) {
+                    min = dist[i];
+                    u = i;
+                }
+
+            vis[u] = true;
+
+            for (int v = 0; v < n; v++) {
+                if (!vis[v] && cost[u][v] != 999 &&
+                    dist[u] + cost[u][v] < dist[v]) {
+                    dist[v] = dist[u] + cost[u][v];
                 }
             }
         }
-        for(int i=0;i<n;i++){
-            System.out.println("Distance from source to node "+i+" is "+dist[i]);
+
+        // output
+        System.out.println("\nShortest distances from source " + src + ":");
+        for (int i = 0; i < n; i++) {
+            System.out.println("To node " + i + " = " + dist[i]);
         }
 
+        sc.close();
     }
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        int n=s.nextInt(),m=s.nextInt();
-        List<List<edge>> g = new ArrayList<>();
-        for(int i=0;i<n;i++) g.add(new ArrayList<>());
-        //edge input
-        for(int i=0;i<m;i++){
-            int u=s.nextInt(), v=s.nextInt(), w=s.nextInt();
-            g.get(u).add(new edge(v,w));
-            //for undirected graph
-        }
-        int src=s.nextInt();
-        dijkstra(n,g,src);
-        
-    }
-    
 }
 
-// 5 7
-// 0 1 10
-// 0 4 5
-// 1 2 1
-// 4 1 3
-// 4 2 9
-// 4 3 2
-// 3 2 4
+
+// 5
+// 0 10 999 999 5
+// 999 0 1 999 3
+// 999 999 0 4 9
+// 999 999 999 0 2
+// 999 999 999 999 0
 // 0
 
-// Distance from 0 to 0 = 0
-// Distance from 0 to 1 = 8
-// Distance from 0 to 2 = 9
-// Distance from 0 to 3 = 7
-// Distance from 0 to 4 = 5
+// Shortest Distances from Source 0:
+// To node 0 = 0
+// To node 1 = 8
+// To node 2 = 9
+// To node 3 = 7
+// To node 4 = 5
 
